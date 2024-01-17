@@ -18,17 +18,25 @@ def route_root():
 
 @app.route("/questions/<int:ques_num>")
 def route_questions(ques_num):
-    return render_template(
-        "question.html", question=satisfaction_survey.questions[ques_num])
+    if ques_num != len(responses):
+        return redirect(__next_page__())
+    else:
+        return render_template(
+            "question.html", question=satisfaction_survey.questions[ques_num])
 
 @app.route("/answer", methods=["post"])
 def route_answer():
     responses.append(request.form["answer"])
-    if len(responses) < len(satisfaction_survey.questions):
-        return redirect(f"/questions/{len(responses)}")
-    else:
-        return redirect("/thankyou")
+    return redirect(__next_page__())
 
 @app.route("/thankyou")
 def route_thankyou():
     return render_template("thankyou.html")
+
+# ==================================================
+
+def __next_page__():
+    if len(responses) < len(satisfaction_survey.questions):
+        return f"/questions/{len(responses)}"
+    else:
+        return "/thankyou"
