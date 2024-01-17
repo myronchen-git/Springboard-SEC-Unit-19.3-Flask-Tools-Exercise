@@ -15,3 +15,8 @@ responses = []
 @app.route("/")
 def route_root():
     return render_template("root.html", survey=satisfaction_survey)
+
+@app.route("/questions/<int:ques_num>")
+def route_questions(ques_num):
+    return render_template(
+        "question.html", question=satisfaction_survey.questions[ques_num])
