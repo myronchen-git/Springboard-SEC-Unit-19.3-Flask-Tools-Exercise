@@ -3,16 +3,6 @@
 {% block title %}Survey{% endblock %}
 
 {% block content %}
-{% with status_messages = get_flashed_messages(with_categories = true)%}
-{% if status_messages %}
-<section>
-    {% for category, msg in status_messages %}
-    <p class="{{ category }}">{{ msg }}</p>
-    {% endfor %}
-</section>
-
-{% endif %}
-{% endwith %}
 <form action="/answer" method="post">
     <label>{{ question.question }}</label>
     <br />
