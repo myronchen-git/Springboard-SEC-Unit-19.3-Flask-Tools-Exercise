@@ -3,7 +3,9 @@
 {% block title %}Survey{% endblock %}
 
 {% block content %}
-<h1>{{ survey.title }}</h1>
-<p>{{ survey.instructions }}</p>
-<a href="/questions/0">Start survey</a>
+<form action="/questions" method="post">
+    <h1>{{ survey.title }}</h1>
+    <p>{{ survey.instructions }}</p>
+    <button>Submit</button>
+</form>
 {% endblock %}
