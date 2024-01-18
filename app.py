@@ -32,7 +32,10 @@ def route_question_num(ques_num):
         return redirect(__next_page__())
     else:
         return render_template(
-            "question.html", question=satisfaction_survey.questions[ques_num])
+            "question.html",
+            survey_title=satisfaction_survey.title,
+            question_number=ques_num,
+            question=satisfaction_survey.questions[ques_num])
 
 @app.route("/answer", methods=["post"])
 def route_answer():
@@ -48,7 +51,7 @@ def route_answer():
 def route_thankyou():
     """Display a survey completion page."""
 
-    return render_template("thankyou.html")
+    return render_template("thankyou.html", survey_title=satisfaction_survey.title)
 
 # ==================================================
 

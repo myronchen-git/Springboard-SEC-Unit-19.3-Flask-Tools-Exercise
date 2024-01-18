@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Survey{% endblock %}
+{% block title %}{{ survey.title }}{% endblock %}
 
 {% block content %}
 <form action="/questions" method="post">

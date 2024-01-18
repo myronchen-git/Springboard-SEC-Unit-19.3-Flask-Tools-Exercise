@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
-{% block title %}Survey{% endblock %}
+{% block title %}
+{{ survey_title }} - Question {{ question_number + 1 }}
+{% endblock %}
 
 {% block content %}
 <form action="/answer" method="post">
