@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ survey.title }}{% endblock %}
+{% block title %}Survey{% endblock %}
 
 {% block content %}
-<form action="/questions" method="post">
-    <h1>{{ survey.title }}</h1>
-    <p>{{ survey.instructions }}</p>
+<form id="form-survey-selection" method="post">
+    <label for="form-survey-selection__select-survey-code">Choose a survey:</label>
+    <br />
+    <select id="form-survey-selection__select-survey-code" name="survey-code">
+        {% for code in survey_codes %}
+        <option value="{{ code }}">{{ code }}</option>
+        {% endfor %}
+    </select>
     <button>Submit</button>
 </form>
 {% endblock %}

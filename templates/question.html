@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
 {% block title %}
-{{ survey_title }} - Question {{ question_number + 1 }}
+{{ survey.title }} - Question {{ question.number + 1 }}
 {% endblock %}
 
 {% block content %}
-<form action="/answer" method="post">
-    <label>{{ question.question }}</label>
+<form action="/survey/{{ survey.code }}/answer" method="post">
+    <label>{{ question.question_instance.question }}</label>
     <br />
-    {% for choice in question.choices %}
+    {% for choice in question.question_instance.choices %}
     <input id="ans-{{ loop.index0 }}" type="radio" name="answer"
         value="{{ choice }}" />
     <label for="ans-{{ loop.index0 }}">{{ choice }}</label><br />

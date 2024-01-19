@@ -13,44 +13,80 @@ debug = DebugToolbarExtension(app)
 
 @app.route("/")
 def route_root():
+    """Display all the surveys and allows a user to select one."""
+
+    return render_template("index.html", survey_codes=surveys.keys())
+
+
+@app.route("/survey/<survey_code>", methods=["post"])
+def survey(survey_code):
     """Display the start of the survey."""
 
-    return render_template("index.html", survey=satisfaction_survey)
+    survey = surveys[survey_code]
+
+    return render_template(
+        "survey-start.html",
+        survey={
+            "code": survey_code,
+            "title": survey.title,
+            "instructions": survey.instructions,
+        },
+    )
 
 
-@app.route("/questions", methods=["post"])
-def route_questions():
+@app.route("/survey/<survey_code>/questions", methods=["post"])
+def route_questions(survey_code):
     """Set up environment and redirect to first question."""
 
-    session["responses"] = []
-    return redirect("/questions/0")
+    session["current_survey_code"] = survey_code
+
+    responses = session.get("responses", {})
+    responses[survey_code] = []
+    session["responses"] = responses
+
+    return redirect(f"/survey/{survey_code}/questions/0")
 
 
-@app.route("/questions/<int:ques_num>")
-def route_question_num(ques_num):
+@app.route("/survey/<survey_code>/questions/<int:ques_num>")
+def route_question_num(survey_code, ques_num):
     """Display a question."""
 
-    if ques_num != len(session["responses"]):
+    if survey_code != session["current_survey_code"]:
+        flash(
+            "Invalid survey.  Please complete the current survey first.",
+            "status-message--error",
+        )
+        return redirect(__next_page__())
+
+    elif ques_num != len(session["responses"][survey_code]):
         flash(
             "Invalid question.  Redirecting to the correct URL.",
             "status-message--error",
         )
         return redirect(__next_page__())
+
     else:
+        survey = surveys[survey_code]
+
         return render_template(
             "question.html",
-            survey_title=satisfaction_survey.title,
-            question_number=ques_num,
-            question=satisfaction_survey.questions[ques_num],
+            survey={
+                "code": survey_code,
+                "title": survey.title,
+            },
+            question={
+                "number": ques_num,
+                "question_instance": survey.questions[ques_num],
+            },
         )
 
 
-@app.route("/answer", methods=["post"])
-def route_answer():
+@app.route("/survey/<survey_code>/answer", methods=["post"])
+def route_answer(survey_code):
     """Handle an answer."""
 
     responses = session["responses"]
-    responses.append(request.form["answer"])
+    responses[survey_code].append(request.form["answer"])
     session["responses"] = responses
 
     return redirect(__next_page__())
@@ -60,7 +96,10 @@ def route_answer():
 def route_thankyou():
     """Display a survey completion page."""
 
-    return render_template("thankyou.html", survey_title=satisfaction_survey.title)
+    survey_code = session["current_survey_code"]
+    survey = surveys[survey_code]
+
+    return render_template("thankyou.html", survey_title=survey.title)
 
 
 # ==================================================
@@ -69,9 +108,11 @@ def route_thankyou():
 def __next_page__():
     """Helper function to find the next page to go to."""
 
-    responses_length = len(session["responses"])
+    survey_code = session["current_survey_code"]
+    survey = surveys[survey_code]
+    responses_length = len(session["responses"][survey_code])
 
-    if responses_length < len(satisfaction_survey.questions):
-        return f"/questions/{responses_length}"
+    if responses_length < len(survey.questions):
+        return f"/survey/{survey_code}/questions/{responses_length}"
     else:
         return "/thankyou"
