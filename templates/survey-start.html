@@ -6,6 +6,6 @@
 <form action="/survey/{{ survey.code }}/questions" method="post">
     <h1>{{ survey.title }}</h1>
     <p>{{ survey.instructions }}</p>
-    <button>Submit</button>
+    <button>{{ begin_button_text }}</button>
 </form>
 {% endblock %}

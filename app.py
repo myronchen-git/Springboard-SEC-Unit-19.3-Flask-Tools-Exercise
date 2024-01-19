@@ -24,6 +24,13 @@ def survey(survey_code):
 
     survey = surveys[survey_code]
 
+    begin_button_text = "Start"
+    responses_length = len(session.get("responses", {}).get(survey_code, []))
+    if 0 < responses_length and responses_length < len(survey.questions):
+        begin_button_text = "Continue"
+    elif responses_length >= len(survey.questions):
+        begin_button_text = "Results"
+
     return render_template(
         "survey-start.html",
         survey={
@@ -31,6 +38,7 @@ def survey(survey_code):
             "title": survey.title,
             "instructions": survey.instructions,
         },
+        begin_button_text=begin_button_text,
     )
 
 
@@ -41,10 +49,13 @@ def route_questions(survey_code):
     session["current_survey_code"] = survey_code
 
     responses = session.get("responses", {})
-    responses[survey_code] = []
-    session["responses"] = responses
+    if not responses.get(survey_code):
+        responses[survey_code] = []
+        session["responses"] = responses
 
-    return redirect(f"/survey/{survey_code}/questions/0")
+    session.permanent = True
+
+    return redirect(__next_page__())
 
 
 @app.route("/survey/<survey_code>/questions/<int:ques_num>")
