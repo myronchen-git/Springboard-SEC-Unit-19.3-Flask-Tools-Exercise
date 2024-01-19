@@ -86,7 +86,12 @@ def route_answer(survey_code):
     """Handle an answer."""
 
     responses = session["responses"]
-    responses[survey_code].append(request.form["answer"])
+    responses[survey_code].append(
+        {
+            "answer": request.form.get("answer", ""),
+            "comment": request.form.get("comment", ""),
+        }
+    )
     session["responses"] = responses
 
     return redirect(__next_page__())

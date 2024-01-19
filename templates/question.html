@@ -13,6 +13,11 @@
         value="{{ choice }}" />
     <label for="ans-{{ loop.index0 }}">{{ choice }}</label><br />
     {% endfor %}
+    {% if question.question_instance.allow_text %}
+    <label for="ans-comment">Comment:</label>
+    <br />
+    <textarea id="ans-comment" name="comment"></textarea>
+    {% endif %}
     <button>Submit</button>
 </form>
 {% endblock %}
