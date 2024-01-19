@@ -8,6 +8,9 @@ app.config["SECRET_KEY"] = "secret"
 
 debug = DebugToolbarExtension(app)
 
+CURRENT_SURVEY_CODE_KEY = "current_survey_code"
+RESPONSES_KEY = "responses"
+
 # ==================================================
 
 
@@ -25,7 +28,7 @@ def survey(survey_code):
     survey = surveys[survey_code]
 
     begin_button_text = "Start"
-    responses_length = len(session.get("responses", {}).get(survey_code, []))
+    responses_length = len(session.get(RESPONSES_KEY, {}).get(survey_code, []))
     if 0 < responses_length and responses_length < len(survey.questions):
         begin_button_text = "Continue"
     elif responses_length >= len(survey.questions):
@@ -46,12 +49,12 @@ def survey(survey_code):
 def route_questions(survey_code):
     """Set up environment and redirect to first question."""
 
-    session["current_survey_code"] = survey_code
+    session[CURRENT_SURVEY_CODE_KEY] = survey_code
 
-    responses = session.get("responses", {})
+    responses = session.get(RESPONSES_KEY, {})
     if not responses.get(survey_code):
         responses[survey_code] = []
-        session["responses"] = responses
+        session[RESPONSES_KEY] = responses
 
     session.permanent = True
 
@@ -62,14 +65,14 @@ def route_questions(survey_code):
 def route_question_num(survey_code, ques_num):
     """Display a question."""
 
-    if survey_code != session["current_survey_code"]:
+    if survey_code != session[CURRENT_SURVEY_CODE_KEY]:
         flash(
             "Invalid survey.  Please complete the current survey first.",
             "status-message--error",
         )
         return redirect(__next_page__())
 
-    elif ques_num != len(session["responses"][survey_code]):
+    elif ques_num != len(session[RESPONSES_KEY][survey_code]):
         flash(
             "Invalid question.  Redirecting to the correct URL.",
             "status-message--error",
@@ -96,14 +99,14 @@ def route_question_num(survey_code, ques_num):
 def route_answer(survey_code):
     """Handle an answer."""
 
-    responses = session["responses"]
+    responses = session[RESPONSES_KEY]
     responses[survey_code].append(
         {
             "answer": request.form.get("answer", ""),
             "comment": request.form.get("comment", ""),
         }
     )
-    session["responses"] = responses
+    session[RESPONSES_KEY] = responses
 
     return redirect(__next_page__())
 
@@ -118,7 +121,7 @@ def route_thankyou(survey_code):
         "thankyou.html",
         survey_title=survey.title,
         questions=survey.questions,
-        responses=session["responses"][survey_code],
+        responses=session[RESPONSES_KEY][survey_code],
     )
 
 
@@ -128,9 +131,9 @@ def route_thankyou(survey_code):
 def __next_page__():
     """Helper function to find the next page to go to."""
 
-    survey_code = session["current_survey_code"]
+    survey_code = session[CURRENT_SURVEY_CODE_KEY]
     survey = surveys[survey_code]
-    responses_length = len(session["responses"][survey_code])
+    responses_length = len(session[RESPONSES_KEY][survey_code])
 
     if responses_length < len(survey.questions):
         return f"/survey/{survey_code}/questions/{responses_length}"
