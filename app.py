@@ -97,14 +97,18 @@ def route_answer(survey_code):
     return redirect(__next_page__())
 
 
-@app.route("/thankyou")
-def route_thankyou():
+@app.route("/survey/<survey_code>/thankyou")
+def route_thankyou(survey_code):
     """Display a survey completion page."""
 
-    survey_code = session["current_survey_code"]
     survey = surveys[survey_code]
 
-    return render_template("thankyou.html", survey_title=survey.title)
+    return render_template(
+        "thankyou.html",
+        survey_title=survey.title,
+        questions=survey.questions,
+        responses=session["responses"][survey_code],
+    )
 
 
 # ==================================================
@@ -120,4 +124,4 @@ def __next_page__():
     if responses_length < len(survey.questions):
         return f"/survey/{survey_code}/questions/{responses_length}"
     else:
-        return "/thankyou"
+        return f"/survey/{survey_code}/thankyou"

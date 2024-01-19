@@ -4,4 +4,14 @@
 
 {% block content %}
 <h1>Thank You!</h1>
+<div>
+    <p>Your choices:</p>
+    {% for i in range(questions|length) %}
+    <div class="question-answer-comment">
+        <p class="question">{{ questions[i].question }}</p>
+        <p class="answer">{{ responses[i].answer }}</p>
+        <p class="comment">{{ responses[i].comment }}</p>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}
