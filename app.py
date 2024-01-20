@@ -65,14 +65,16 @@ def route_questions(survey_code):
 def route_question_num(survey_code, ques_num):
     """Display a question."""
 
-    if survey_code != session[CURRENT_SURVEY_CODE_KEY]:
+    responses = session.get(RESPONSES_KEY, {}).get(survey_code)
+
+    if survey_code != session.get(CURRENT_SURVEY_CODE_KEY, ""):
         flash(
             "Invalid survey.  Please complete the current survey first.",
             "alert-warning status-message--error",
         )
         return redirect(__next_unvisited_page__())
 
-    elif ques_num < 0 or ques_num > len(session[RESPONSES_KEY][survey_code]):
+    elif ques_num < 0 or ques_num > len(responses):
         flash(
             "Invalid question.  Redirecting to the correct URL.",
             "alert-warning status-message--error",
@@ -134,7 +136,7 @@ def route_thankyou(survey_code):
         "thankyou.html",
         survey_title=survey.title,
         questions=survey.questions,
-        responses=session[RESPONSES_KEY][survey_code],
+        responses=session.get(RESPONSES_KEY, {}).get(survey_code, []),
     )
 
 
