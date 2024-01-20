@@ -3,9 +3,11 @@
 {% block title %}{{ survey.title }}{% endblock %}
 
 {% block content %}
-<form action="/survey/{{ survey.code }}/questions" method="post">
-    <h1>{{ survey.title }}</h1>
-    <p>{{ survey.instructions }}</p>
-    <button>{{ begin_button_text }}</button>
+<form
+    class="d-flex flex-column justify-content-center align-items-center py-5"
+    action="/survey/{{ survey.code }}/questions" method="post">
+    <h1 class="my-5">{{ survey.title }}</h1>
+    <p class="my-5 fs-5">{{ survey.instructions }}</p>
+    <button class="btn btn-primary btn-lg my-5">{{ begin_button_text }}</button>
 </form>
 {% endblock %}

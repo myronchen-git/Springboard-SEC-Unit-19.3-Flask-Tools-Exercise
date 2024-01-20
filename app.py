@@ -68,14 +68,14 @@ def route_question_num(survey_code, ques_num):
     if survey_code != session[CURRENT_SURVEY_CODE_KEY]:
         flash(
             "Invalid survey.  Please complete the current survey first.",
-            "status-message--error",
+            "alert-warning status-message--error",
         )
         return redirect(__next_page__())
 
     elif ques_num != len(session[RESPONSES_KEY][survey_code]):
         flash(
             "Invalid question.  Redirecting to the correct URL.",
-            "status-message--error",
+            "alert-warning status-message--error",
         )
         return redirect(__next_page__())
 

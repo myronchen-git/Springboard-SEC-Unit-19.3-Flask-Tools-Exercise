@@ -3,14 +3,25 @@
 {% block title %}{{ survey_title }} - Thank You{% endblock %}
 
 {% block content %}
-<h1>Thank You!</h1>
-<div>
-    <p>Your choices:</p>
+<h1 class="my-5">🎉Thank You!🎉</h1>
+<div class="text-start w-75 mx-auto">
+    <p class="fs-4">Your choices:</p>
     {% for i in range(questions|length) %}
-    <div class="question-answer-comment">
-        <p class="question">{{ questions[i].question }}</p>
-        <p class="answer">{{ responses[i].answer }}</p>
-        <p class="comment">{{ responses[i].comment }}</p>
+    <div
+        class="question-answer-comment bg-info-subtle p-3 my-2 rounded">
+        <p class="question p-1 my-2">
+            {{ questions[i].question }}
+        </p>
+        {% if responses[i].answer %}
+        <p class="answer bg-dark-subtle p-1 my-2 rounded">
+            {{ responses[i].answer }}
+        </p>
+        {% endif %}
+        {% if responses[i].comment %}
+        <p class="comment bg-dark-subtle p-1 my-2 rounded">
+            {{ responses[i].comment }}
+        </p>
+        {% endif %}
     </div>
     {% endfor %}
 </div>

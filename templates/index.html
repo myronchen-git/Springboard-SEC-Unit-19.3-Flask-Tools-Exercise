@@ -3,14 +3,24 @@
 {% block title %}Survey{% endblock %}
 
 {% block content %}
-<form id="form-survey-selection" method="post">
-    <label for="form-survey-selection__select-survey-code">Choose a survey:</label>
-    <br />
-    <select id="form-survey-selection__select-survey-code" name="survey-code">
-        {% for code in survey_codes %}
-        <option value="{{ code }}">{{ code }}</option>
-        {% endfor %}
-    </select>
-    <button>Submit</button>
-</form>
+<div class="row">
+    <div class="col col-sm-10 col-md-8 col-lg-6 mx-auto">
+        <form id="form-survey-selection"
+            class="d-flex flex-column justify-content-center align-items-center py-5"
+            method="post">
+            <label for="form-survey-selection__select-survey-code"
+                class="form-label my-5 text-center fs-1">
+                Choose a survey:
+            </label>
+            <select id="form-survey-selection__select-survey-code"
+                class="form-select my-5"
+                name="survey-code">
+                {% for code in survey_codes %}
+                <option value="{{ code }}">{{ code }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary btn-lg my-5">Submit</button>
+        </form>
+    </div>
+</div>
 {% endblock %}
