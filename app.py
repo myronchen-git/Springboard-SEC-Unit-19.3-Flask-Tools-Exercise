@@ -70,14 +70,14 @@ def route_question_num(survey_code, ques_num):
     if survey_code != session.get(CURRENT_SURVEY_CODE_KEY, "") or responses is None:
         flash(
             "Wrong page location.",
-            "alert-warning status-message--error",
+            "alert-warning",
         )
         return redirect("/")
 
     elif ques_num < 0 or ques_num > len(responses):
         flash(
             "Invalid question.  Redirecting to the correct URL.",
-            "alert-warning status-message--error",
+            "alert-warning",
         )
         return redirect(__next_unvisited_page__())
 
@@ -147,10 +147,10 @@ def __next_unvisited_page__():
     """Helper function to find the next page to go to."""
 
     survey_code = session[CURRENT_SURVEY_CODE_KEY]
-    survey = surveys[survey_code]
+    questions_amount = len(surveys[survey_code].questions)
     responses_length = len(session[RESPONSES_KEY][survey_code])
 
-    if responses_length < len(survey.questions):
+    if responses_length < questions_amount:
         return f"/survey/{survey_code}/questions/{responses_length}"
     else:
         return f"/survey/{survey_code}/thankyou"
