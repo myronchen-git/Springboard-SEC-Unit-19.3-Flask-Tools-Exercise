@@ -58,7 +58,7 @@ def route_questions(survey_code):
 
     session.permanent = True
 
-    return redirect(__next_page__())
+    return redirect(__next_unvisited_page__())
 
 
 @app.route("/survey/<survey_code>/questions/<int:ques_num>")
@@ -70,14 +70,14 @@ def route_question_num(survey_code, ques_num):
             "Invalid survey.  Please complete the current survey first.",
             "alert-warning status-message--error",
         )
-        return redirect(__next_page__())
+        return redirect(__next_unvisited_page__())
 
-    elif ques_num != len(session[RESPONSES_KEY][survey_code]):
+    elif ques_num < 0 or ques_num > len(session[RESPONSES_KEY][survey_code]):
         flash(
             "Invalid question.  Redirecting to the correct URL.",
             "alert-warning status-message--error",
         )
-        return redirect(__next_page__())
+        return redirect(__next_unvisited_page__())
 
     else:
         survey = surveys[survey_code]
@@ -99,16 +99,29 @@ def route_question_num(survey_code, ques_num):
 def route_answer(survey_code):
     """Handle an answer."""
 
+    ques_num = int(request.form.get("ques_num"))
+    response = {
+        "answer": request.form.get("answer", ""),
+        "comment": request.form.get("comment", ""),
+    }
+
     responses = session[RESPONSES_KEY]
-    responses[survey_code].append(
-        {
-            "answer": request.form.get("answer", ""),
-            "comment": request.form.get("comment", ""),
-        }
-    )
+
+    if ques_num == len(responses[survey_code]):
+        responses[survey_code].append(response)
+    else:
+        responses[survey_code][ques_num] = response
+
     session[RESPONSES_KEY] = responses
 
-    return redirect(__next_page__())
+    if request.form.get("go") == "next":
+        if ques_num < len(surveys[survey_code].questions) - 1:
+            return redirect(f"/survey/{survey_code}/questions/{ques_num + 1}")
+        else:
+            return redirect(f"/survey/{survey_code}/thankyou")
+
+    elif request.form.get("go") == "previous":
+        return redirect(f"/survey/{survey_code}/questions/{ques_num - 1}")
 
 
 @app.route("/survey/<survey_code>/thankyou")
@@ -128,7 +141,7 @@ def route_thankyou(survey_code):
 # ==================================================
 
 
-def __next_page__():
+def __next_unvisited_page__():
     """Helper function to find the next page to go to."""
 
     survey_code = session[CURRENT_SURVEY_CODE_KEY]

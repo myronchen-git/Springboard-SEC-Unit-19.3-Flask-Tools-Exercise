@@ -7,6 +7,7 @@
 {% block content %}
 <form class="d-flex flex-column justify-content-center align-items-center py-5"
     action="/survey/{{ survey.code }}/answer" method="post">
+    <input type="hidden" name="ques_num" value="{{ question.number }}" />
     <p class="my-5 fs-3">{{ question.question_instance.question }}</p>
     {% for choice in question.question_instance.choices %}
     <div class="my-2 fs-5">
@@ -24,6 +25,9 @@
         <textarea id="ans-comment" name="comment" cols="50" rows="4"></textarea>
     </div>
     {% endif %}
-    <button class="btn btn-primary btn-lg my-5">Submit</button>
+    {% if question.number > 0 %}
+    <button class="btn btn-primary btn-lg my-5" name="go" value="previous">Previous</button>
+    {% endif %}
+    <button class="btn btn-primary btn-lg my-5" name="go" value="next">Next</button>
 </form>
 {% endblock %}
