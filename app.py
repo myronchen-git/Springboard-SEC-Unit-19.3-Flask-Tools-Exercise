@@ -67,12 +67,12 @@ def route_question_num(survey_code, ques_num):
 
     responses = session.get(RESPONSES_KEY, {}).get(survey_code)
 
-    if survey_code != session.get(CURRENT_SURVEY_CODE_KEY, ""):
+    if survey_code != session.get(CURRENT_SURVEY_CODE_KEY, "") or responses is None:
         flash(
-            "Invalid survey.  Please complete the current survey first.",
+            "Wrong page location.",
             "alert-warning status-message--error",
         )
-        return redirect(__next_unvisited_page__())
+        return redirect("/")
 
     elif ques_num < 0 or ques_num > len(responses):
         flash(
