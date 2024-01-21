@@ -18,7 +18,7 @@
             )%}
             {% if status_messages %}
             <section
-                class="notifications py-3">
+                class="notifications py-3 w-75 position-fixed top-0 start-50 translate-middle-x">
                 {% for category, msg in status_messages %}
                 <div class="alert {{ category }} alert-dismissible" role="alert">
                     {{ msg }}
